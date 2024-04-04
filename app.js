@@ -1,11 +1,92 @@
-const 시작_시간 = new Date();
+const 정답 = "APPLE";
 
-function setTime() {
-  const 현재_시간 = new Date();
-  const 흐른_시간 = new Date(현재_시간 - 시작_시간);
-  const 분 = 흐른_시간.getMinutes();
-  const 초 = 흐른_시간.getSeconds();
-  timer.innerText = `${분}:${초}`;
+let attempts = 0;
+let index = 0;
+let timer;
+
+function appStart() {
+  const displayGameover = () => {
+    const div = document.createElement("div");
+    div.innerText = "게임이 종료됐습니다";
+    div.style =
+      "display:flex; justify-content:center; align-items:center; position:absolute;";
+    document.body.appendChild(div);
+  };
 }
 
-setInterval(setTime, 1000);
+function appStart() {
+  const nextLine = () => {
+    attempts += 1;
+    index = 0;
+  };
+
+  const gameover = () => {
+    window.removeEventListener("keydown", handleKeydown);
+    displayGameover();
+  };
+
+  const handleEnterKey = () => {
+    let 맞은_갯수 = 0;
+
+    for (let i = 0; i < 5; i++) {
+      const block = document.querySelector(
+        `.board-block[data-index='${attempts}${i}']`
+      );
+      const 입력한_글자 = block.innerText;
+      const 정답_글자 = 정답[i];
+      if (입력한_글자 === 정답_글자) {
+        맞은_갯수 += 1;
+        block.style.background = "rgb(83, 141, 78)";
+      } else if (정답.includes(입력한_글자))
+        block.style.background = "rgb(181, 159, 59)";
+      else block.style.background = "gray";
+      block.style.color = "white";
+    }
+
+    if (맞은_갯수 === 5) gameover();
+    else nextLine();
+    if (attempts === 6) return;
+    attempts += 1;
+    index = 0;
+  };
+
+  const handleKeydown = (event) => {
+    // index가 5가 되면 값을 반환하고 나간다
+
+    const key = event.key.toUpperCase();
+    const keyCode = event.keyCode;
+    const thisBlock = document.querySelector(
+      `.board-block[data-index='${attempts}${index}']`
+    );
+
+    if (index === 5) {
+      if (event.key === "Enter") handleEnterKey();
+      else return;
+    } else if (65 <= keyCode && keyCode <= 90) {
+      thisBlock.innerText = key;
+      index += 1;
+    }
+  };
+
+  const startTimer = () => {
+    const 시작_시간 = new Date();
+
+    function setTime() {
+      const 현재_시간 = new Date();
+      const 흐른_시간 = new Date(현재_시간 - 시작_시간);
+      const 분 = 흐른_시간.getMinutes().toString().padStart(2, "0");
+      const 초 = 흐른_시간.getSeconds().toString().padStart(2, "0");
+      const timerDiv = document.querySelector(".timer");
+      timerDiv.innerText = `${분}:${초}`;
+    }
+
+    timer = setInterval(setTime, 1000);
+  };
+
+  startTimer();
+
+  // 윈도우 전체.이벤트적용("키 눌렀을 떄")
+  window.addEventListener("keydown", handleKeydown);
+}
+
+appStart();
