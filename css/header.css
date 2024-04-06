@@ -8,12 +8,13 @@
 }
 
 .info-bars img {
-  width: 35px;
+  width: 30px;
 }
 
 .info-title {
   font-size: 30px;
   font-weight: bold;
+  font-style: oblique;
 }
 
 .info-icons {
