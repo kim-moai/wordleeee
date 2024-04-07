@@ -7,22 +7,22 @@ let timer;
 function appStart() {
   const displayGameover = () => {
     const div = document.createElement("div");
-    div.innerText = "게임이 종료됐습니다";
+    div.innerText = "게임이 종료되었습니다.";
     div.style =
-      "display:flex; justify-content:center; align-items:center; position:absolute;";
+      "display:flex; justify-content:center; align-items:center; font-weight:bold; position:absolute; top:40%; left:45%; background-color:red; width:200px; height:100px;";
     document.body.appendChild(div);
-  };
-}
-
-function appStart() {
-  const nextLine = () => {
-    attempts += 1;
-    index = 0;
   };
 
   const gameover = () => {
     window.removeEventListener("keydown", handleKeydown);
     displayGameover();
+    clearInterval(timer);
+  };
+
+  const nextLine = () => {
+    if (attempts === 6) return gameover;
+    attempts += 1;
+    index = 0;
   };
 
   const handleEnterKey = () => {
@@ -36,30 +36,37 @@ function appStart() {
       const 정답_글자 = 정답[i];
       if (입력한_글자 === 정답_글자) {
         맞은_갯수 += 1;
-        block.style.background = "rgb(83, 141, 78)";
+        block.style.background = "green";
       } else if (정답.includes(입력한_글자))
-        block.style.background = "rgb(181, 159, 59)";
+        block.style.background = "rgb(181,159,59)";
       else block.style.background = "gray";
+
       block.style.color = "white";
     }
 
     if (맞은_갯수 === 5) gameover();
     else nextLine();
-    if (attempts === 6) return;
-    attempts += 1;
-    index = 0;
+  };
+
+  const handleBackspace = () => {
+    if (index > 0) {
+      const preBlock = document.querySelector(
+        `.board-block[data-index='${attempts}${index - 1}']`
+      );
+      preBlock.innerText = "";
+    }
+    if (index !== 0) index -= 1;
   };
 
   const handleKeydown = (event) => {
-    // index가 5가 되면 값을 반환하고 나간다
-
     const key = event.key.toUpperCase();
     const keyCode = event.keyCode;
     const thisBlock = document.querySelector(
       `.board-block[data-index='${attempts}${index}']`
     );
 
-    if (index === 5) {
+    if (event.key === "Backspace") handleBackspace();
+    else if (index === 5) {
       if (event.key === "Enter") handleEnterKey();
       else return;
     } else if (65 <= keyCode && keyCode <= 90) {
@@ -85,7 +92,6 @@ function appStart() {
 
   startTimer();
 
-  // 윈도우 전체.이벤트적용("키 눌렀을 떄")
   window.addEventListener("keydown", handleKeydown);
 }
 
